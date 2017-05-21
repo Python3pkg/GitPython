@@ -24,7 +24,7 @@ from git.compat import (
     force_bytes,
     PY3,
     # just to satisfy flake8 on py3
-    unicode,
+    str,
     safe_decode,
     is_posix,
     is_win,
@@ -128,7 +128,7 @@ def slots_to_dict(self, exclude=()):
 
 
 def dict_to_slots_and__excluded_are_none(self, d, excluded=()):
-    for k, v in d.items():
+    for k, v in list(d.items()):
         setattr(self, k, v)
     for k in excluded:
         setattr(self, k, None)
@@ -381,7 +381,7 @@ class Git(LazyMixin):
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             line = self.readline()
             if not line:
                 raise StopIteration
@@ -714,7 +714,7 @@ class Git(LazyMixin):
         :return: dict that maps environment variables to their old values
         """
         old_env = {}
-        for key, value in kwargs.items():
+        for key, value in list(kwargs.items()):
             # set value if it is None
             if value is not None:
                 old_env[key] = self._environment.get(key)
@@ -763,8 +763,8 @@ class Git(LazyMixin):
     def transform_kwargs(self, split_single_char_options=True, **kwargs):
         """Transforms Python style kwargs into git command line options."""
         args = list()
-        kwargs = OrderedDict(sorted(kwargs.items(), key=lambda x: x[0]))
-        for k, v in kwargs.items():
+        kwargs = OrderedDict(sorted(list(kwargs.items()), key=lambda x: x[0]))
+        for k, v in list(kwargs.items()):
             if isinstance(v, (list, tuple)):
                 for value in v:
                     args += self.transform_kwarg(k, value, split_single_char_options)
@@ -777,7 +777,7 @@ class Git(LazyMixin):
         if not isinstance(arg_list, (list, tuple)):
             # This is just required for unicode conversion, as subprocess can't handle it
             # However, in any other case, passing strings (usually utf-8 encoded) is totally fine
-            if not PY3 and isinstance(arg_list, unicode):
+            if not PY3 and isinstance(arg_list, str):
                 return [arg_list.encode(defenc)]
             return [str(arg_list)]
 
@@ -785,7 +785,7 @@ class Git(LazyMixin):
         for arg in arg_list:
             if isinstance(arg_list, (list, tuple)):
                 outlist.extend(cls.__unpack_args(arg))
-            elif not PY3 and isinstance(arg_list, unicode):
+            elif not PY3 and isinstance(arg_list, str):
                 outlist.append(arg_list.encode(defenc))
             # END recursion
             else:
@@ -840,8 +840,8 @@ class Git(LazyMixin):
         :return: Same as ``execute``"""
         # Handle optional arguments prior to calling transform_kwargs
         # otherwise these'll end up in args, which is bad.
-        exec_kwargs = dict((k, v) for k, v in kwargs.items() if k in execute_kwargs)
-        opts_kwargs = dict((k, v) for k, v in kwargs.items() if k not in execute_kwargs)
+        exec_kwargs = dict((k, v) for k, v in list(kwargs.items()) if k in execute_kwargs)
+        opts_kwargs = dict((k, v) for k, v in list(kwargs.items()) if k not in execute_kwargs)
 
         insert_after_this_arg = opts_kwargs.pop('insert_kwargs_after', None)
 

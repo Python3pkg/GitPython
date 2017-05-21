@@ -171,7 +171,7 @@ class IndexFile(LazyMixin, diff.Diffable, Serializable):
 
     def _entries_sorted(self):
         """:return: list of entries, in a sorted fashion, first by path, then by stage"""
-        return sorted(self.entries.values(), key=lambda e: (e.path, e.stage))
+        return sorted(list(self.entries.values()), key=lambda e: (e.path, e.stage))
 
     def _serialize(self, stream, ignore_extension_data=False):
         entries = self._entries_sorted()
@@ -280,7 +280,7 @@ class IndexFile(LazyMixin, diff.Diffable, Serializable):
 
         inst = cls(repo)
         # convert to entries dict
-        entries = dict(izip(((e.path, e.stage) for e in base_entries),
+        entries = dict(zip(((e.path, e.stage) for e in base_entries),
                             (IndexEntry.from_base(e) for e in base_entries)))
 
         inst.entries = entries
@@ -915,7 +915,7 @@ class IndexFile(LazyMixin, diff.Diffable, Serializable):
 
         # parse result - first 0:n/2 lines are 'checking ', the remaining ones
         # are the 'renaming' ones which we parse
-        for ln in xrange(int(len(mvlines) / 2), len(mvlines)):
+        for ln in range(int(len(mvlines) / 2), len(mvlines)):
             tokens = mvlines[ln].split(' to ')
             assert len(tokens) == 2, "Too many tokens in %s" % mvlines[ln]
 

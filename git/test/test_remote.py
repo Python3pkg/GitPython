@@ -97,7 +97,7 @@ class TestRemoteProgress(RemoteProgress):
         assert self._stages_per_op
 
         # must have seen all stages
-        for op, stages in self._stages_per_op.items():  # @UnusedVariable
+        for op, stages in list(self._stages_per_op.items()):  # @UnusedVariable
             assert stages & self.STAGE_MASK == self.STAGE_MASK
         # END for each op/stage
 

@@ -126,7 +126,7 @@ class Tutorials(TestBase):
 
         class MyProgressPrinter(RemoteProgress):
             def update(self, op_code, cur_count, max_count=None, message=''):
-                print(op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or "NO MESSAGE")
+                print((op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or "NO MESSAGE"))
         # end
 
         self.assertEqual(len(cloned_repo.remotes), 1)                    # we have been cloned, so should be one remote
@@ -134,7 +134,7 @@ class Tutorials(TestBase):
         origin = bare_repo.create_remote('origin', url=cloned_repo.working_tree_dir)
         assert origin.exists()
         for fetch_info in origin.fetch(progress=MyProgressPrinter()):
-            print("Updated %s to %s" % (fetch_info.ref, fetch_info.commit))
+            print(("Updated %s to %s" % (fetch_info.ref, fetch_info.commit)))
         # create a local branch at the latest fetched master. We specify the name statically, but you have all
         # information to do it programatically as well.
         bare_master = bare_repo.create_head('master', origin.refs.master)
@@ -350,7 +350,7 @@ class Tutorials(TestBase):
         # The index contains all blobs in a flat list
         assert len(list(index.iter_blobs())) == len([o for o in repo.head.commit.tree.traverse() if o.type == 'blob'])
         # Access blob objects
-        for (path, stage), entry in index.entries.items():  # @UnusedVariable
+        for (path, stage), entry in list(index.entries.items()):  # @UnusedVariable
             pass
         new_file_path = osp.join(repo.working_tree_dir, 'new-file-name')
         open(new_file_path, 'w').close()

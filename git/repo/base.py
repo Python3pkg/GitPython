@@ -726,9 +726,9 @@ class Repo(object):
                         break
 
             yield BlameEntry(commits[hexsha],
-                             range(lineno, lineno + num_lines),
+                             list(range(lineno, lineno + num_lines)),
                              safe_decode(orig_filename),
-                             range(orig_lineno, orig_lineno + num_lines))
+                             list(range(orig_lineno, orig_lineno + num_lines)))
 
     def blame(self, rev, file, incremental=False, **kwargs):
         """The blame information for the given file at the given revision.

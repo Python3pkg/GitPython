@@ -35,6 +35,7 @@ from .refs import (
     SymbolicReference,
     TagReference
 )
+import collections
 
 
 log = logging.getLogger('git.remote')
@@ -66,7 +67,7 @@ def to_progress_instance(progress):
     RemoteProgress().
     """
     # new API only needs progress as a function
-    if callable(progress):
+    if isinstance(progress, collections.Callable):
         return CallableRemoteProgress(progress)
 
     # where None is passed create a parser that eats the progress

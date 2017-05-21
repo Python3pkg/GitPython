@@ -2,7 +2,7 @@
 Import all submodules main classes into the package space
 """
 # flake8: noqa
-from __future__ import absolute_import
+
 
 import inspect
 
@@ -22,5 +22,5 @@ del(smutil)
 
 # must come after submodule was made available
 
-__all__ = [name for name, obj in locals().items()
+__all__ = [name for name, obj in list(locals().items())
            if not (name.startswith('_') or inspect.ismodule(obj))]

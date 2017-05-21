@@ -9,5 +9,5 @@ import inspect
 from .asserts import *
 from .helper import *
 
-__all__ = [name for name, obj in locals().items()
+__all__ = [name for name, obj in list(locals().items())
            if not (name.startswith('_') or inspect.ismodule(obj))]

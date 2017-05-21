@@ -3,7 +3,7 @@
 #
 # This module is part of GitPython and is released under
 # the BSD License: http://www.opensource.org/licenses/bsd-license.php
-from __future__ import print_function
+
 from io import BytesIO
 from time import time
 import sys
@@ -90,7 +90,7 @@ class TestPerformance(TestBigRepoRW):
 
         nc = 5000
         st = time()
-        for i in xrange(nc):
+        for i in range(nc):
             cm = Commit(rwrepo, Commit.NULL_BIN_SHA, hc.tree,
                         hc.author, hc.authored_date, hc.author_tz_offset,
                         hc.committer, hc.committed_date, hc.committer_tz_offset,

@@ -28,7 +28,7 @@ import os.path as osp
 
 
 try:
-    import ConfigParser as cp
+    import configparser as cp
 except ImportError:
     # PY3
     import configparser as cp
@@ -441,7 +441,7 @@ class GitConfigParser(with_metaclass(MetaParserBuilder, cp.RawConfigParser, obje
         git compatible format"""
         def write_section(name, section_dict):
             fp.write(("[%s]\n" % name).encode(defenc))
-            for (key, value) in section_dict.items():
+            for (key, value) in list(section_dict.items()):
                 if key != "__name__":
                     fp.write(("\t%s = %s\n" % (key, self._value_to_string(value).replace('\n', '\n\t'))).encode(defenc))
                 # END if key is not __name__
@@ -449,7 +449,7 @@ class GitConfigParser(with_metaclass(MetaParserBuilder, cp.RawConfigParser, obje
 
         if self._defaults:
             write_section(cp.DEFAULTSECT, self._defaults)
-        for name, value in self._sections.items():
+        for name, value in list(self._sections.items()):
             write_section(name, value)
 
     def items(self, section_name):

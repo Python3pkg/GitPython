@@ -48,7 +48,7 @@ class RefLogEntry(tuple):
         """:return: a string suitable to be placed in a reflog file"""
         act = self.actor
         time = self.time
-        return u"{0} {1} {2} <{3}> {4!s} {5}\t{6}\n".format(self.oldhexsha,
+        return "{0} {1} {2} <{3}> {4!s} {5}\t{6}\n".format(self.oldhexsha,
                                                             self.newhexsha,
                                                             act.name,
                                                             act.email,
@@ -222,7 +222,7 @@ class RefLog(list, Serializable):
             return RefLogEntry.from_line(fp.readlines()[index].strip())
         else:
             # read until index is reached
-            for i in xrange(index + 1):
+            for i in range(index + 1):
                 line = fp.readline()
                 if not line:
                     break

@@ -63,7 +63,7 @@ class TestIndex(TestBase):
 
     def _assert_fprogress(self, entries):
         self.assertEqual(len(entries), len(self._fprogress_map))
-        for path, call_count in self._fprogress_map.items():  # @UnusedVariable
+        for path, call_count in list(self._fprogress_map.items()):  # @UnusedVariable
             self.assertEqual(call_count, 2)
         # END for each item in progress map
         self._reset_progress()
@@ -101,7 +101,7 @@ class TestIndex(TestBase):
         assert index.version > 0
 
         # test entry
-        entry = next(iter(index.entries.values()))
+        entry = next(iter(list(index.entries.values())))
         for attr in ("path", "ctime", "mtime", "dev", "inode", "mode", "uid",
                      "gid", "size", "binsha", "hexsha", "stage"):
             getattr(entry, attr)
@@ -115,7 +115,7 @@ class TestIndex(TestBase):
         # test stage
         index_merge = IndexFile(self.rorepo, fixture_path("index_merge"))
         self.assertEqual(len(index_merge.entries), 106)
-        assert len(list(e for e in index_merge.entries.values() if e.stage != 0))
+        assert len(list(e for e in list(index_merge.entries.values()) if e.stage != 0))
 
         # write the data - it must match the original
         tmpfile = tempfile.mktemp()
@@ -135,7 +135,7 @@ class TestIndex(TestBase):
             blist.append(blob)
         # END for each blob in tree
         if len(blist) != len(index.entries):
-            iset = set(k[0] for k in index.entries.keys())
+            iset = set(k[0] for k in list(index.entries.keys()))
             bset = set(b.path for b in blist)
             raise AssertionError("CMP Failed: Missing entries in index: %s, missing in tree: %s" %
                                  (bset - iset, iset - bset))
@@ -183,7 +183,7 @@ class TestIndex(TestBase):
 
         # merge three trees - here we have a merge conflict
         three_way_index = IndexFile.from_tree(rw_repo, common_ancestor_sha, cur_sha, other_sha)
-        assert len(list(e for e in three_way_index.entries.values() if e.stage != 0))
+        assert len(list(e for e in list(three_way_index.entries.values()) if e.stage != 0))
 
         # ITERATE BLOBS
         merge_required = lambda t: t[0] != 0
@@ -205,7 +205,7 @@ class TestIndex(TestBase):
         assert unmerged_blob_map
 
         # pick the first blob at the first stage we find and use it as resolved version
-        three_way_index.resolve_blobs(l[0][1] for l in unmerged_blob_map.values())
+        three_way_index.resolve_blobs(l[0][1] for l in list(unmerged_blob_map.values()))
         tree = three_way_index.write_tree()
         assert isinstance(tree, Tree)
         num_blobs = 0
@@ -422,7 +422,7 @@ class TestIndex(TestBase):
         num_entries = len(index.entries)
         cur_head = rw_repo.head
 
-        uname = u"Thomas Müller"
+        uname = "Thomas Müller"
         umail = "sd@company.com"
         with rw_repo.config_writer() as writer:
             writer.set_value("user", "name", uname)
@@ -433,7 +433,7 @@ class TestIndex(TestBase):
         # IndexEntries
         def mixed_iterator():
             count = 0
-            for entry in index.entries.values():
+            for entry in list(index.entries.values()):
                 type_id = count % 4
                 if type_id == 0:    # path
                     yield entry.path
@@ -477,7 +477,7 @@ class TestIndex(TestBase):
         # TEST COMMITTING
         # commit changed index
         cur_commit = cur_head.commit
-        commit_message = u"commit default head by Frèderic Çaufl€"
+        commit_message = "commit default head by Frèderic Çaufl€"
 
         new_commit = index.commit(commit_message, head=False)
         assert cur_commit != new_commit
@@ -493,13 +493,13 @@ class TestIndex(TestBase):
         # commit with other actor
         cur_commit = cur_head.commit
 
-        my_author = Actor(u"Frèderic Çaufl€", "author@example.com")
-        my_committer = Actor(u"Committing Frèderic Çaufl€", "committer@example.com")
+        my_author = Actor("Frèderic Çaufl€", "author@example.com")
+        my_committer = Actor("Committing Frèderic Çaufl€", "committer@example.com")
         commit_actor = index.commit(commit_message, author=my_author, committer=my_committer)
         assert cur_commit != commit_actor
-        self.assertEqual(commit_actor.author.name, u"Frèderic Çaufl€")
+        self.assertEqual(commit_actor.author.name, "Frèderic Çaufl€")
         self.assertEqual(commit_actor.author.email, "author@example.com")
-        self.assertEqual(commit_actor.committer.name, u"Committing Frèderic Çaufl€")
+        self.assertEqual(commit_actor.committer.name, "Committing Frèderic Çaufl€")
         self.assertEqual(commit_actor.committer.email, "committer@example.com")
         self.assertEqual(commit_actor.message, commit_message)
         self.assertEqual(commit_actor.parents[0], cur_commit)
@@ -509,11 +509,11 @@ class TestIndex(TestBase):
 
         # commit with author_date and commit_date
         cur_commit = cur_head.commit
-        commit_message = u"commit with dates by Avinash Sajjanshetty"
+        commit_message = "commit with dates by Avinash Sajjanshetty"
 
         new_commit = index.commit(commit_message, author_date="2006-04-07T22:13:13", commit_date="2005-04-07T22:13:13")
         assert cur_commit != new_commit
-        print(new_commit.authored_date, new_commit.committed_date)
+        print((new_commit.authored_date, new_commit.committed_date))
         self.assertEqual(new_commit.message, commit_message)
         self.assertEqual(new_commit.authored_date, 1144447993)
         self.assertEqual(new_commit.committed_date, 1112911993)
@@ -843,7 +843,7 @@ class TestIndex(TestBase):
         # NOTE: fp is not a Unicode object in python 2 (which is the source of the problem)
         fp = osp.join(rw_dir, 'ø.txt')
         with open(fp, 'wb') as fs:
-            fs.write(u'content of ø'.encode('utf-8'))
+            fs.write('content of ø'.encode('utf-8'))
 
         r = Repo.init(rw_dir)
         r.index.add([fp])

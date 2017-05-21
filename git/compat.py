@@ -43,10 +43,10 @@ if PY3:
         return bytes([n])
 
     def mviter(d):
-        return d.values()
+        return list(d.values())
 
     range = xrange  # @ReservedAssignment
-    unicode = str
+    str = str
     binary_type = bytes
 else:
     FileType = file  # @UndefinedVariable on PY3
@@ -56,17 +56,17 @@ else:
         defenc = 'utf-8'
     byte_ord = ord
     bchr = chr
-    unicode = unicode
+    str = str
     binary_type = str
     range = xrange  # @ReservedAssignment
 
     def mviter(d):
-        return d.itervalues()
+        return iter(d.values())
 
 
 def safe_decode(s):
     """Safely decodes a binary string to unicode"""
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return s
     elif isinstance(s, bytes):
         return s.decode(defenc, 'surrogateescape')
@@ -76,7 +76,7 @@ def safe_decode(s):
 
 def safe_encode(s):
     """Safely decodes a binary string to unicode"""
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return s.encode(defenc)
     elif isinstance(s, bytes):
         return s
@@ -86,7 +86,7 @@ def safe_encode(s):
 
 def win_encode(s):
     """Encode unicodes for process arguments on Windows."""
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return s.encode(locale.getpreferredencoding(False))
     elif isinstance(s, bytes):
         return s
@@ -155,7 +155,7 @@ if PY3:
     _unichr = chr
     bytes_chr = lambda code: bytes((code,))
 else:
-    _unichr = unichr
+    _unichr = chr
     bytes_chr = chr
 
 def surrogateescape_handler(exc):

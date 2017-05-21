@@ -396,17 +396,17 @@ class TestRepo(TestBase):
 
             # Check all outputted line numbers
             ranges = flatten([entry.linenos for entry in blame_output])
-            self.assertEqual(ranges, flatten([range(2, 3), range(14, 15), range(1, 2), range(3, 14), range(15, 17)]))
+            self.assertEqual(ranges, flatten([list(range(2, 3)), list(range(14, 15)), list(range(1, 2)), list(range(3, 14)), list(range(15, 17))]))
 
             commits = [entry.commit.hexsha[:7] for entry in blame_output]
             self.assertEqual(commits, ['82b8902', '82b8902', 'c76852d', 'c76852d', 'c76852d'])
 
             # Original filenames
-            self.assertSequenceEqual([entry.orig_path for entry in blame_output], [u'AUTHORS'] * len(blame_output))
+            self.assertSequenceEqual([entry.orig_path for entry in blame_output], ['AUTHORS'] * len(blame_output))
 
             # Original line numbers
             orig_ranges = flatten([entry.orig_linenos for entry in blame_output])
-            self.assertEqual(orig_ranges, flatten([range(2, 3), range(14, 15), range(1, 2), range(2, 13), range(13, 15)]))   # noqa E501
+            self.assertEqual(orig_ranges, flatten([list(range(2, 3)), list(range(14, 15)), list(range(1, 2)), list(range(2, 13)), list(range(13, 15))]))   # noqa E501
 
     @patch.object(Git, '_call_process')
     def test_blame_complex_revision(self, git):
@@ -430,10 +430,10 @@ class TestRepo(TestBase):
                 (rwrepo.git.add, True),
         )):
             base = rwrepo.working_tree_dir
-            files = (join_path_native(base, u"%i_test _myfile" % run),
+            files = (join_path_native(base, "%i_test _myfile" % run),
                      join_path_native(base, "%i_test_other_file" % run),
-                     join_path_native(base, u"%i__çava verböten" % run),
-                     join_path_native(base, u"%i_çava-----verböten" % run))
+                     join_path_native(base, "%i__çava verböten" % run),
+                     join_path_native(base, "%i_çava-----verböten" % run))
 
             num_recently_untracked = 0
             for fpath in files:
@@ -677,7 +677,7 @@ class TestRepo(TestBase):
                     self.assertEqual(obj.type, ref.object.type)
                     num_resolved += 1
                 except (BadName, BadObject):
-                    print("failed on %s" % path_section)
+                    print(("failed on %s" % path_section))
                     # is fine, in case we have something like 112, which belongs to remotes/rname/merge-requests/112
                     pass
                 # END exception handling

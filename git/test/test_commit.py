@@ -4,7 +4,7 @@
 #
 # This module is part of GitPython and is released under
 # the BSD License: http://www.opensource.org/licenses/bsd-license.php
-from __future__ import print_function
+
 
 from datetime import datetime
 from io import BytesIO
@@ -125,7 +125,7 @@ class TestCommit(TestBase):
         check_entries(stats.total)
         assert "files" in stats.total
 
-        for filepath, d in stats.files.items():  # @UnusedVariable
+        for filepath, d in list(stats.files.items()):  # @UnusedVariable
             check_entries(d)
         # END for each stated file
 
@@ -141,9 +141,9 @@ class TestCommit(TestBase):
 
     def test_unicode_actor(self):
         # assure we can parse unicode actors correctly
-        name = u"Üäöß ÄußÉ"
+        name = "Üäöß ÄußÉ"
         self.assertEqual(len(name), 9)
-        special = Actor._from_string(u"%s <something@this.com>" % name)
+        special = Actor._from_string("%s <something@this.com>" % name)
         self.assertEqual(special.name, name)
         assert isinstance(special.name, text_type)
 
@@ -293,10 +293,10 @@ class TestCommit(TestBase):
         assert isinstance(cmt.message, text_type)     # it automatically decodes it as such
         assert isinstance(cmt.author.name, text_type)  # same here
 
-        cmt.message = u"üäêèß"
+        cmt.message = "üäêèß"
         self.assertEqual(len(cmt.message), 5)
 
-        cmt.author.name = u"äüß"
+        cmt.author.name = "äüß"
         self.assertEqual(len(cmt.author.name), 3)
 
         cstream = BytesIO()
@@ -318,7 +318,7 @@ class TestCommit(TestBase):
         with open(fixture_path('commit_invalid_data'), 'rb') as fd:
             cmt._deserialize(fd)
 
-        self.assertEqual(cmt.author.name, u'E.Azer Ko�o�o�oculu', cmt.author.name)
+        self.assertEqual(cmt.author.name, 'E.Azer Ko�o�o�oculu', cmt.author.name)
         self.assertEqual(cmt.author.email, 'azer@kodfabrik.com', cmt.author.email)
 
     def test_gpgsig(self):
